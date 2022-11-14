@@ -1,4 +1,5 @@
 const express = require('express');
+require("jest-sorted");
 const app = express();
 const {getCategories} = require('./controllers/categories-controllers');
 const {getReviews, getReviewById, getComments} = require('./controllers/reviews-controllers')

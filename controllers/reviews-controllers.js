@@ -2,6 +2,7 @@ const {
     fetchReviews,
     fetchReviewById,
     fetchComments
+    fetchReviewById
 } = require('../models/reviews-models');
 
 exports.getReviews = (req, res, next) => {
@@ -21,3 +22,4 @@ exports.getComments = (req, res, next) => {
         res.send({comments})
     }).catch(next)
 }
+

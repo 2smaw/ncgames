@@ -28,3 +28,4 @@ exports.fetchComments = (reviewId) => {
         } else return response.rows;
     })
 }
+
