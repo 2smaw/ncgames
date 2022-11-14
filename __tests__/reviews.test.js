@@ -19,7 +19,6 @@ test('should return an array of review objects', () => {
       .expect(200)
       .then(({body : {reviews}}) => {
         reviews.forEach((review) => {
-          expect(Object.keys(review).length).toBe(9);
           expect(review).toMatchObject({
             title: expect.any(String),
             review_id: expect.any(Number),
