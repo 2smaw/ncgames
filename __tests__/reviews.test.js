@@ -64,4 +64,43 @@ describe('GET - 200: /api/reviews/:review_id', () => {
             })
         });
       });
+    test('returns 404 error when review id not valid', () => {
+        return request(app)
+          .get("/api/reviews/100/comments")
+          .expect(404)
+        });
+});
+
+describe('GET - 200: /api/reviews/:review_id/comments', () => {
+    test('returns requested review object', () => {
+        return request(app)
+          .get("/api/reviews/2/comments")
+          .expect(200)
+          .then(({body: {comments}}) => {
+            comments.forEach((comment) => {
+                expect(comment).toMatchObject({
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),
+                    created_at: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    review_id: expect.any(Number)
+                })
+            })
+        });
+      });
+      test('sorted by date', () => {
+        return request(app)
+          .get("/api/reviews/2/comments")
+          .expect(200)
+          .then(({body: {comments}}) => {
+            expect(comments).toBeSortedBy('created_at', {descending: true})
+          })
+      });
+      test('returns 404 error when review id not valid', () => {
+        return request(app)
+          .get("/api/reviews/100/comments")
+          .expect(404)
+        });
+
 });
