@@ -1,4 +1,5 @@
 const request = require("supertest");
+require('jest-sorted');
 const seed = require('../db/seeds/seed');
 const db = require('../db/connection');
 const app = require("../app");
@@ -31,6 +32,14 @@ test('should return an array of review objects', () => {
             votes: expect.any(Number)
         });
       });
+    });
+  }); 
+  test('should return array by descending order of date', () => {
+    return request(app)
+      .get("/api/reviews")
+      .expect(200)
+      .then(({body : {reviews}}) => {
+        expect(reviews).toBeSortedBy('created_at', {descending: true})
     });
   }); 
 });
