@@ -1,4 +1,5 @@
 const request = require("supertest");
+require('jest-sorted');
 const seed = require('../db/seeds/seed');
 const db = require('../db/connection');
 const app = require("../app");
@@ -43,3 +44,24 @@ test('should return an array of review objects', () => {
   }); 
 });
 
+describe('GET - 200: /api/reviews/:review_id', () => {
+    test('returns requested review object', () => {
+        return request(app)
+          .get("/api/reviews/1")
+          .expect(200)
+          .then(({body: {review}}) => {
+            expect(review).toEqual({
+                title: 'Agricola',
+    designer: 'Uwe Rosenberg',
+    owner: 'mallionaire',
+    review_img_url:
+      'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+    review_body: 'Farmyard fun!',
+    review_id: 1,
+    category: 'euro game',
+    created_at: '2021-01-18T10:00:20.514Z',
+    votes: 1
+            })
+        });
+      });
+});

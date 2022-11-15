@@ -9,3 +9,8 @@ exports.getReviews = (req, res, next) => {
     })
 }
 
+exports.getReviewById = (req, res, next) => {
+    fetchReviewById(req.params.review_id).then((review) => {
+        res.send({review})
+    })
+}
