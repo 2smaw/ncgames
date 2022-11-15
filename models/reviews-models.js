@@ -29,3 +29,36 @@ exports.fetchComments = (reviewId) => {
         } else return response.rows;
     })
 }
+
+exports.insertComment = (reviewId, newComment) => {
+    const queryStr = `
+        INSERT INTO comments
+        (body, author, review_id)
+        VALUES
+        ($1, $2, $3)
+        RETURNING *;
+        `;
+    const queryValues = [newComment.body, newComment.username, reviewId];
+    return db.query(queryStr, queryValues).then((response) => {
+        return response.rows[0];
+    }).catch((err) => {
+        if (err.code==='23503') {
+            return Promise.reject({status: 404, msg: `no such review!`})}
+        else if (err.code === '22P02') {
+            return Promise.reject({status: 400, msg: 'baaad request x'});
+        }
+    })
+}
+
+exports.updateReviewVote = (reviewId, changeVoteCount) => {
+    const queryStr = `
+        UPDATE reviews
+        SET votes=votes+$1
+        WHERE review_id=$2
+        RETURNING *;`;
+    const queryValues = [changeVoteCount, reviewId];
+    return db.query(queryStr, queryValues).then((response) => {
+        if (response.rows[0].votes>=0) {return response.rows[0];}
+        else {return Promise.reject({status: 400, msg: `there weren/'t that many votes to start with...`})}
+    })
+}

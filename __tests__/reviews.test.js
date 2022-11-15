@@ -159,4 +159,38 @@ describe('POST - 201: /api/reviews/:review_id/comments', () => {
           .then((response) => expect(response.body.msg).toEqual('baaad request x'))
           });
 
+        })
+// 8-increase votes functionality
+describe('PATCH - 200 /api/review/:review_id', () => {
+  test('returns updated review with vote INCREMENT', () => {
+    return request(app)
+      .patch("/api/reviews/1")
+      .send({inc_votes: 1})
+      .expect(200)
+      .then((review) => {
+        expect(review.body.votes).toBe(2)
+      })
+  });
+  test('returns updated review with vote DECREMENT', () => {
+    return request(app)
+      .patch("/api/reviews/2")
+      .send({inc_votes: -2})
+      .expect(200)
+      .then((review) => {
+        expect(review.body.votes).toBe(3)
+      })
+  });
+
+  // error handling
+  test('returns custom err msg when decrement > existing votes', () => {
+    return request(app)
+      .patch("/api/reviews/3")
+      .send({inc_votes: -10})
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toEqual(`there weren/'t that many votes to start with...`)
+        // how to check that review was NOT updated in error case?
+      })
+  });
 });
+
