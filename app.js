@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const {getCategories} = require('./controllers/categories-controllers');
-const {getReviews, getReviewById, getComments, postComment} = require('./controllers/reviews-controllers')
+const {getReviews, getReviewById, getComments, postComment, patchReviewVote} = require('./controllers/reviews-controllers')
 
 app.use(express.json());
 
@@ -13,6 +13,9 @@ app.get('/api/reviews/:review_id/comments', getComments);
 
 // post requests
 app.post('/api/reviews/:review_id/comments', postComment);
+
+// patch requests
+app.patch('/api/reviews/:review_id', patchReviewVote);
 
 // error handling
 

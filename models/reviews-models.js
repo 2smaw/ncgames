@@ -49,3 +49,16 @@ exports.insertComment = (reviewId, newComment) => {
         }
     })
 }
+
+exports.updateReviewVote = (reviewId, changeVoteCount) => {
+    const queryStr = `
+        UPDATE reviews
+        SET votes=votes+$1
+        WHERE review_id=$2
+        RETURNING *;`;
+    const queryValues = [changeVoteCount, reviewId];
+    return db.query(queryStr, queryValues).then((response) => {
+        if (response.rows[0].votes>=0) {return response.rows[0];}
+        else {return Promise.reject({status: 400, msg: `there weren/'t that many votes to start with...`})}
+    })
+}
