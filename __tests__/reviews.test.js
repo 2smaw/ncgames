@@ -117,9 +117,9 @@ describe('POST - 201: /api/reviews/:review_id/comments', () => {
           .send({username: 'mallionaire', body: 'v good v good'})
           .expect(201)
           .then((newComment) => {
-            expect(newComment.body.author).toEqual('mallionaire');
-            expect(newComment.body.body).toEqual("v good v good");
-            expect(newComment.body.review_id).toEqual(2);
+            expect(newComment.body.author).toBe('mallionaire');
+            expect(newComment.body.body).toBe("v good v good");
+            expect(newComment.body.review_id).toBe(2);
             expect(newComment.body).toMatchObject({
                 comment_id: expect.any(Number),
                 created_at: expect.any(String),
@@ -127,6 +127,21 @@ describe('POST - 201: /api/reviews/:review_id/comments', () => {
             });
         });
       });
+      // error handling
+      test('returns 400 error when missing username', () => {
+        return request(app)
+          .post("/api/reviews/1/comments")
+          .send({body: 'v good v good'})
+          .expect(400)
+          .then((response) => expect(response.body.msg).toEqual('missing username'))
+        });
+      test('returns 400 error when missing body', () => {
+        return request(app)
+            .post("/api/reviews/1/comments")
+            .send({username: 'mallionaire'})
+            .expect(400)
+            .then((response) => expect(response.body.msg).toEqual('missing body'))
+          });
       test('returns 404 error when review id valid but not exists', () => {
         return request(app)
           .post("/api/reviews/100/comments")

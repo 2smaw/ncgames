@@ -31,6 +31,8 @@ exports.fetchComments = (reviewId) => {
 }
 
 exports.insertComment = (reviewId, newComment) => {
+    if (!newComment.body) {return Promise.reject({status: 400, msg: `missing body`})};
+    if (!newComment.username) {return Promise.reject({status: 400, msg: `missing username`})};
     const queryStr = `
         INSERT INTO comments
         (body, author, review_id)
