@@ -1,15 +1,18 @@
 const express = require('express');
 const app = express();
 const {getCategories} = require('./controllers/categories-controllers');
-const {getReviews, getReviewById, getComments} = require('./controllers/reviews-controllers')
+const {getReviews, getReviewById, getComments, postComment} = require('./controllers/reviews-controllers')
 
 app.use(express.json());
 
+// get requests
 app.get('/api/categories', getCategories);
 app.get('/api/reviews', getReviews);
 app.get('/api/reviews/:review_id', getReviewById);
 app.get('/api/reviews/:review_id/comments', getComments);
 
+// post requests
+app.post('/api/reviews/:review_id/comments', postComment);
 
 // error handling
 
@@ -33,7 +36,7 @@ app.use((err, req, res, next) => {
 // internal server errors
 app.use((err, req, res, next) => {
     console.log('caught error: ', err);
-    res.status(500).send('Internal server error')
+    res.status(500).send('internal server error')
 })
 
 module.exports = app;

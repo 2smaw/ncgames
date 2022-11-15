@@ -13,7 +13,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe('200 - GET /api/reviews', () => {
+describe('GET - 200: /api/reviews', () => {
 test('should return an array of review objects', () => {
     return request(app)
       .get("/api/reviews")
@@ -26,7 +26,6 @@ test('should return an array of review objects', () => {
             category: expect.any(String),
             designer: expect.any(String),
             owner: expect.any(String),
-            review_body: expect.any(String),
             review_img_url: expect.any(String),
             created_at: expect.any(String),
             votes: expect.any(Number)
@@ -97,10 +96,49 @@ describe('GET - 200: /api/reviews/:review_id/comments', () => {
             expect(comments).toBeSortedBy('created_at', {descending: true})
           })
       });
-      test('returns 404 error when review id not valid', () => {
+      test('returns 404 error when review id valid but does not exist', () => {
         return request(app)
           .get("/api/reviews/100/comments")
           .expect(404)
+          .then((response) => expect(response.body.msg).toEqual('no such review!'))
         });
+      // test('returns 200 empty array when review has no comments', () => {
+      //   return request(app)
+      //     .get("/api/reviews/??/comments")
+      //     .expect(200)
+      //     .then(({body}) => expect(body).toEqual([]))
+      // })
+});
 
+describe('POST - 201: /api/reviews/:review_id/comments', () => {
+    test('returns posted comment', () => {
+        return request(app)
+          .post("/api/reviews/2/comments")
+          .send({username: 'mallionaire', body: 'v good v good'})
+          .expect(201)
+          .then((newComment) => {
+            expect(newComment.body.author).toEqual('mallionaire');
+            expect(newComment.body.body).toEqual("v good v good");
+            expect(newComment.body.review_id).toEqual(2);
+            expect(newComment.body).toMatchObject({
+                comment_id: expect.any(Number),
+                created_at: expect.any(String),
+                votes: expect.any(Number)
+            });
+        });
+      });
+      test('returns 404 error when review id valid but not exists', () => {
+        return request(app)
+          .post("/api/reviews/100/comments")
+          .send({username: 'mallionaire', body: 'v good v good'})
+          .expect(404)
+          .then((response) => expect(response.body.msg).toEqual('no such review!'))
+        });
+      test('returns 400 error when review id is invalid', () => {
+        return request(app)
+          .post("/api/reviews/invalid/comments")
+          .send({username: 'mallionaire', body: 'v good v good'})
+          .expect(400)
+          .then((response) => expect(response.body.msg).toEqual('baaad request x'))
+          });
 });
