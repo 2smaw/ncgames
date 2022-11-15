@@ -24,9 +24,3 @@ exports.getComments = (req, res, next) => {
     }).catch(next)
 }
 
-exports.postComment = (req, res, next) => {
-    insertComment(req.params.review_id, req.body).then((newComment) => {
-        console.log(newComment);
-        res.status(201).send(newComment)
-    }).catch(next)
-}
