@@ -1,7 +1,8 @@
 const {
     fetchReviews,
     fetchReviewById,
-    fetchComments
+    fetchComments,
+    insertComment,
     fetchReviewById
 } = require('../models/reviews-models');
 
