@@ -36,3 +36,4 @@ exports.patchReviewVote = (req, res, next) => {
         res.status(200).send(updatedReview);
     }).catch(next)
 }
+

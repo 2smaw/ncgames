@@ -63,6 +63,7 @@ describe('GET - 200: /api/reviews/:review_id', () => {
             })
         });
       });
+
     test('returns 404 error when review id not valid', () => {
         return request(app)
           .get("/api/reviews/100/comments")
@@ -177,3 +178,4 @@ describe('PATCH - 200 /api/review/:review_id', () => {
       })
   });
 });
+
