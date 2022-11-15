@@ -159,7 +159,7 @@ describe('POST - 201: /api/reviews/:review_id/comments', () => {
           .then((response) => expect(response.body.msg).toEqual('baaad request x'))
           });
 
-
+        })
 // 8-increase votes functionality
 describe('PATCH - 200 /api/review/:review_id', () => {
   test('returns updated review with vote INCREMENT', () => {
