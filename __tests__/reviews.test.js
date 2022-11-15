@@ -63,6 +63,7 @@ describe('GET - 200: /api/reviews/:review_id', () => {
             })
         });
       });
+
     test('returns 404 error when review id not valid', () => {
         return request(app)
           .get("/api/reviews/100/comments")
@@ -141,4 +142,5 @@ describe('POST - 201: /api/reviews/:review_id/comments', () => {
           .expect(400)
           .then((response) => expect(response.body.msg).toEqual('baaad request x'))
           });
+
 });
