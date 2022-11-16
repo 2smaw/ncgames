@@ -5,6 +5,7 @@ const db = require('../db/connection');
 const app = require("../app");
 const testdata = require("../db/data/test-data/");
 
+
 beforeEach(() => {
   return seed(testdata);
 });
@@ -35,16 +36,16 @@ test('should return an array of review objects', () => {
     });
   }); 
   // queries - category
-  test('should return object filtered with valid queries', () => {
+  test.only('should return object filtered with valid queries', () => {
     return request(app)
-      .get('/api/reviews/?category=hidden-roles')
+      .get('/api/reviews?category=dexterity')
       .expect(200)
-      .then(({body : {reviews}}) => {
+      .then(({body: {reviews}}) => {
         reviews.forEach((review) => {
           expect(review).toMatchObject({
             title: expect.any(String),
             review_id: expect.any(Number),
-            category: 'hidden-roles',
+            category: 'dexterity',
             designer: expect.any(String),
             owner: expect.any(String),
             review_img_url: expect.any(String),
@@ -58,7 +59,7 @@ test('should return an array of review objects', () => {
   // queries - sort_by
   test('should return object filtered with valid queries', () => {
     return request(app)
-      .get('/api/reviews/?sort_by=votes')
+      .get('/api/reviews?sort_by=votes')
       .expect(200)
       .then(({body : {reviews}}) => {
         expect(reviews).toBeSortedBy('votes')
@@ -67,7 +68,7 @@ test('should return an array of review objects', () => {
   // queries - order
   test('should return object filtered with valid queries', () => {
     return request(app)
-      .get('/api/reviews/?order=desc')
+      .get('/api/reviews?order=desc')
       .expect(200)
       .then(({body : {reviews}}) => {
         expect(reviews).toBeSortedBy('created_at', {descending: true})
@@ -76,7 +77,7 @@ test('should return an array of review objects', () => {
   // multiple queries
   test('should return object filtered with valid queries', () => {
     return request(app)
-      .get('/api/reviews/?category=hidden-roles&sort_by=votes&rder=desc')
+      .get('/api/reviews?category=hidden-roles&sort_by=votes&order=desc')
       .expect(200)
       .then(({body : {reviews}}) => {
         expect(reviews).toBeSortedBy('vote', {descending: true});
@@ -106,7 +107,7 @@ test('should return an array of review objects', () => {
   // error handling
   test('returns 400 - custom message for invalid sort query', () => {
     return request(app)
-      .get("/api/reviews/?sort_by=something")
+      .get("/api/reviews?sort_by=something")
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe('invalid sort request')
