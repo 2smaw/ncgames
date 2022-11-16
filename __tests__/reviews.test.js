@@ -28,7 +28,8 @@ test('should return an array of review objects', () => {
             owner: expect.any(String),
             review_img_url: expect.any(String),
             created_at: expect.any(String),
-            votes: expect.any(Number)
+            votes: expect.any(Number),
+            comment_count: expect.any(Number)
         });
       });
     });
@@ -43,33 +44,32 @@ test('should return an array of review objects', () => {
   }); 
 });
 
-
 describe('GET - 200: /api/reviews/:review_id', () => {
-    test('returns requested review object', () => {
-        return request(app)
-          .get("/api/reviews/1")
-          .expect(200)
-          .then(({body: {review}}) => {
-            expect(review).toEqual({
-                title: 'Agricola',
-    designer: 'Uwe Rosenberg',
-    owner: 'mallionaire',
-    review_img_url:
-      'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-    review_body: 'Farmyard fun!',
-    review_id: 1,
-    category: 'euro game',
-    created_at: '2021-01-18T10:00:20.514Z',
-    votes: 1
-            })
+  test('returns requested review object', () => {
+    return request(app)
+      .get("/api/reviews/2")
+      .expect(200)
+      .then(({body: {review}}) => {
+        expect(review).toMatchObject({
+          review_id: 2,
+          title: 'Jenga',
+          category: 'dexterity',
+          designer: 'Leslie Scott',
+          owner: 'philippaclaire9',
+          review_body: 'Fiddly fun for all the family',
+          review_img_url: 'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+          created_at: expect.any(String),
+          votes: 5,
+          comment_count: expect.any(Number)
         });
       });
+    });
 
-    test('returns 404 error when review id not valid', () => {
-        return request(app)
-          .get("/api/reviews/100/comments")
-          .expect(404)
-        });
+  test('returns 404 error when review id not valid', () => {
+    return request(app)
+      .get("/api/reviews/100/comments")
+      .expect(404)
+    });
 });
 
 describe('GET - 200: /api/reviews/:review_id/comments', () => {
@@ -104,12 +104,12 @@ describe('GET - 200: /api/reviews/:review_id/comments', () => {
           .expect(404)
           .then((response) => expect(response.body.msg).toEqual('no such review!'))
         });
-      // test('returns 200 empty array when review has no comments', () => {
-      //   return request(app)
-      //     .get("/api/reviews/??/comments")
-      //     .expect(200)
-      //     .then(({body}) => expect(body).toEqual([]))
-      // })
+      test('returns 200 empty array when review has no comments', () => {
+        return request(app)
+          .get("/api/reviews/10/comments")
+          .expect(200)
+          .then(({body: {comments}}) => expect(comments).toEqual([]))
+      })
 });
 
 describe('POST - 201: /api/reviews/:review_id/comments', () => {
@@ -160,7 +160,7 @@ describe('POST - 201: /api/reviews/:review_id/comments', () => {
           });
 
         })
-// 8-increase votes functionality
+
 describe('PATCH - 200 /api/review/:review_id', () => {
   test('returns updated review with vote INCREMENT', () => {
     return request(app)
@@ -193,4 +193,3 @@ describe('PATCH - 200 /api/review/:review_id', () => {
       })
   });
 });
-
