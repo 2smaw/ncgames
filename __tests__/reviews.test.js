@@ -135,28 +135,28 @@ describe('POST - 201: /api/reviews/:review_id/comments', () => {
           .post("/api/reviews/1/comments")
           .send({body: 'v good v good'})
           .expect(400)
-          .then((response) => expect(response.body.msg).toEqual('missing username'))
+          .then((response) => expect(response.body.msg).toBe('missing username'))
         });
       test('returns 400 error when missing body', () => {
         return request(app)
             .post("/api/reviews/1/comments")
             .send({username: 'mallionaire'})
             .expect(400)
-            .then((response) => expect(response.body.msg).toEqual('missing body'))
+            .then((response) => expect(response.body.msg).toBe('missing body'))
           });
       test('returns 404 error when review id valid but not exists', () => {
         return request(app)
           .post("/api/reviews/100/comments")
           .send({username: 'mallionaire', body: 'v good v good'})
           .expect(404)
-          .then((response) => expect(response.body.msg).toEqual('no such review!'))
+          .then((response) => expect(response.body.msg).toBe('no such review!'))
         });
       test('returns 400 error when review id is invalid', () => {
         return request(app)
           .post("/api/reviews/invalid/comments")
           .send({username: 'mallionaire', body: 'v good v good'})
           .expect(400)
-          .then((response) => expect(response.body.msg).toEqual('baaad request x'))
+          .then((response) => expect(response.body.msg).toBe('baaad request x'))
           });
 
         })
@@ -188,7 +188,7 @@ describe('PATCH - 200 /api/review/:review_id', () => {
       .send({inc_votes: -10})
       .expect(400)
       .then((response) => {
-        expect(response.body.msg).toEqual(`there weren/'t that many votes to start with...`)
+        expect(response.body.msg).toBe(`there weren/'t that many votes to start with...`)
         // how to check that review was NOT updated in error case?
       })
   });

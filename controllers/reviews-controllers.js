@@ -32,7 +32,6 @@ exports.postComment = (req, res, next) => {
 
 exports.patchReviewVote = (req, res, next) => {
     updateReviewVote(req.params.review_id, req.body.inc_votes).then((updatedReview) => {
-        console.log(updatedReview);
         res.status(200).send(updatedReview);
     }).catch(next)
 }
