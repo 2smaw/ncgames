@@ -1,15 +1,32 @@
 const { response } = require('../app');
+const { query } = require('../db/connection');
 const db = require('../db/connection');
 const { checkReviewHasComments } = require('../db/seeds/utils');
 
-exports.fetchReviews = () => {
-    const queryStr = `SELECT title, designer, owner, reviews.review_id, review_img_url, category, reviews.created_at, reviews.votes, COUNT(comments.body)::INT AS comment_count
+exports.fetchReviews = ({category=null, sort_by='created_at', order='ASC'}) => {
+    const validSorts = ['title', 'designer', 'owner', 'category', 'created_at', 'votes'];
+    const validOrders = ['DESC', 'ASC'];
+
+    let queryStr = `SELECT title, designer, owner, reviews.review_id, review_img_url, category, reviews.created_at, reviews.votes, COUNT(comments.body)::INT AS comment_count
     FROM reviews 
-    LEFT JOIN comments ON reviews.review_id=comments.review_id
-    GROUP BY reviews.review_id
-    ORDER BY reviews.created_at DESC;`
-    return db.query(queryStr).then((response) => {
-        return response.rows})
+    LEFT JOIN comments ON reviews.review_id=comments.review_id`
+    let queryValues = [];
+    
+    // query - category
+    if (category) {
+        queryStr += ` WHERE reviews.category = $1`;
+        queryValues.push(category);
+    }
+    queryStr += ` GROUP BY reviews.review_id
+        ORDER BY reviews.${sort_by} ${order};`
+
+    // no errors return
+    if (validSorts.includes(sort_by) & validOrders.includes(order.toUpperCase())) {
+        return db.query(queryStr, queryValues).then((response) => {
+            return response.rows})
+        } else {
+            return Promise.reject({status: 400, msg: `invalid sort request`})
+        }
 }
 
 exports.fetchReviewById = (reviewId) => {

@@ -60,7 +60,7 @@ test('should return an array of review objects', () => {
     return request(app)
       .get('/api/reviews/?sort_by=votes')
       .expect(200)
-      .then((reviews) => {
+      .then(({body : {reviews}}) => {
         expect(reviews).toBeSortedBy('votes')
       })
   });
@@ -69,8 +69,8 @@ test('should return an array of review objects', () => {
     return request(app)
       .get('/api/reviews/?order=desc')
       .expect(200)
-      .then((reviews) => {
-        expect(reviews).toBeSortedBy('date', {descending: true})
+      .then(({body : {reviews}}) => {
+        expect(reviews).toBeSortedBy('created_at', {descending: true})
       })
   });
   // multiple queries
@@ -95,14 +95,31 @@ test('should return an array of review objects', () => {
         });
       });
   });
-  test('should return array by descending order of date', () => {
+  test('should return array with most recent reviews first', () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({body : {reviews}}) => {
-        expect(reviews).toBeSortedBy('created_at', {descending: true})
+        expect(reviews).toBeSortedBy('created_at')
     });
   }); 
+  // error handling
+  test('returns 400 - custom message for invalid sort query', () => {
+    return request(app)
+      .get("/api/reviews/?sort_by=something")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('invalid sort request')
+    });
+  });
+  test('returns 400 - custom message for invalid order query', () => {
+    return request(app)
+      .get("/api/reviews/?order=something")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('invalid sort request')
+    });
+  });
 });
 
 describe('GET - 200: /api/reviews/:review_id', () => {
