@@ -4,6 +4,7 @@ const app = express();
 const {getCategories} = require('./controllers/categories-controllers');
 const {getReviews, getReviewById, getComments, postComment, patchReviewVote} = require('./controllers/reviews-controllers')
 const {getUsers} = require('./controllers/users-controllers');
+const {deleteComment} = require('./controllers/comments-controllers');
 
 app.use(express.json());
 
@@ -20,6 +21,9 @@ app.post('/api/reviews/:review_id/comments', postComment);
 
 // patch requests
 app.patch('/api/reviews/:review_id', patchReviewVote);
+
+// delete requests
+app.delete('/api/comments/:comment_id', deleteComment);
 
 // error handling
 
