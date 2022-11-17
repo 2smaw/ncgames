@@ -5,7 +5,8 @@ const {getCategories} = require('./controllers/categories-controllers');
 const {getReviews, getReviewById, getComments, postComment, patchReviewVote} = require('./controllers/reviews-controllers')
 const {getUsers} = require('./controllers/users-controllers');
 const {deleteComment} = require('./controllers/comments-controllers');
-const {getEndpoints} = require('./controllers/endpoints-controllers');
+
+const { getEndpoints } = require('./controllers/endpoints-controllers');
 
 app.use(express.json());
 
@@ -16,6 +17,7 @@ app.get('/api/reviews/:review_id', getReviewById);
 app.get('/api/reviews/:review_id/comments', getComments);
 app.get('/api/users', getUsers);
 app.get('/api', getEndpoints);
+
 // post requests
 app.post('/api/reviews/:review_id/comments', postComment);
 
