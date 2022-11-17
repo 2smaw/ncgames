@@ -56,6 +56,23 @@ test('should return an array of review objects', () => {
         })
       })
   });
+    // error handling - categories
+    test('should return 200 when category exists with no review', () => {
+      return request(app)
+        .get('/api/reviews?category=children\'s games')
+        .expect(200)
+        .then((response) => {
+          expect(response.body.msg).toBe(`no reviews in this category`)
+        })
+    });
+    test('should return 404 error when category entered non-existent', () => {
+      return request(app)
+        .get('/api/reviews?category=something')
+        .expect(404)
+        .then((response) => {
+          expect(response.body.msg).toBe(`category does not exist`)
+        })
+    });
   // queries - sort_by
   test('should return object filtered with valid queries', () => {
     return request(app)
