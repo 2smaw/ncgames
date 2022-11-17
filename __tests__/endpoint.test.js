@@ -15,6 +15,11 @@ return db.end();
 
 describe('GET - 200: /api', () => {
     test('return json object of all endpoints', () => {
-        
+        return request(app)
+        .get('/api')
+        .expect(200)
+        .then((response) => {
+            expect(response).toHaveLength(9)
+        })
     });
 });
