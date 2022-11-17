@@ -3,7 +3,7 @@ require('jest-sorted');
 const seed = require('../db/seeds/seed');
 const db = require('../db/connection');
 const app = require("../app");
-const testdata = require("../db/data/test-data/");
+const testdata = require("../db/data/test-data");
 
 beforeEach(() => {
     return seed(testdata);
