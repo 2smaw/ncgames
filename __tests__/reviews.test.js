@@ -36,7 +36,7 @@ test('should return an array of review objects', () => {
     });
   }); 
   // queries - category
-  test.only('should return object filtered with valid queries', () => {
+  test('should return object filtered with valid queries', () => {
     return request(app)
       .get('/api/reviews?category=dexterity')
       .expect(200)
@@ -94,15 +94,15 @@ test('should return an array of review objects', () => {
   // multiple queries
   test('should return object filtered with valid queries', () => {
     return request(app)
-      .get('/api/reviews?category=hidden-roles&sort_by=votes&order=desc')
+      .get('/api/reviews?category=dexterity&sort_by=votes&order=desc')
       .expect(200)
       .then(({body : {reviews}}) => {
-        expect(reviews).toBeSortedBy('vote', {descending: true});
+        expect(reviews).toBeSortedBy('votes', {descending: true});
         reviews.forEach((review) => {
           expect(review).toMatchObject({
             title: expect.any(String),
             review_id: expect.any(Number),
-            category: 'hidden-roles',
+            category: 'dexterity',
             designer: expect.any(String),
             owner: expect.any(String),
             review_img_url: expect.any(String),
