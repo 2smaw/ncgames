@@ -19,7 +19,7 @@ describe('GET - 200: /api', () => {
         .get('/api')
         .expect(200)
         .then(({body: {endpoints}}) => {
-            expect(endpoints).toHaveLength(9)
+            expect(Object.keys(endpoints)).toHaveLength(9)
         })
     });
 });
