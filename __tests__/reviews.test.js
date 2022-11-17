@@ -5,6 +5,7 @@ const db = require('../db/connection');
 const app = require("../app");
 const testdata = require("../db/data/test-data/");
 
+
 beforeEach(() => {
   return seed(testdata);
 });
@@ -34,14 +35,92 @@ test('should return an array of review objects', () => {
       });
     });
   }); 
-  test('should return array by descending order of date', () => {
+  // queries - category
+  test.only('should return object filtered with valid queries', () => {
+    return request(app)
+      .get('/api/reviews?category=dexterity')
+      .expect(200)
+      .then(({body: {reviews}}) => {
+        reviews.forEach((review) => {
+          expect(review).toMatchObject({
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: 'dexterity',
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(Number)
+          })
+        })
+      })
+  });
+  // queries - sort_by
+  test('should return object filtered with valid queries', () => {
+    return request(app)
+      .get('/api/reviews?sort_by=votes')
+      .expect(200)
+      .then(({body : {reviews}}) => {
+        expect(reviews).toBeSortedBy('votes')
+      })
+  });
+  // queries - order
+  test('should return object filtered with valid queries', () => {
+    return request(app)
+      .get('/api/reviews?order=desc')
+      .expect(200)
+      .then(({body : {reviews}}) => {
+        expect(reviews).toBeSortedBy('created_at', {descending: true})
+      })
+  });
+  // multiple queries
+  test('should return object filtered with valid queries', () => {
+    return request(app)
+      .get('/api/reviews?category=hidden-roles&sort_by=votes&order=desc')
+      .expect(200)
+      .then(({body : {reviews}}) => {
+        expect(reviews).toBeSortedBy('vote', {descending: true});
+        reviews.forEach((review) => {
+          expect(review).toMatchObject({
+            title: expect.any(String),
+            review_id: expect.any(Number),
+            category: 'hidden-roles',
+            designer: expect.any(String),
+            owner: expect.any(String),
+            review_img_url: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(Number)
+          });
+        });
+      });
+  });
+  test('should return array with most recent reviews first', () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
       .then(({body : {reviews}}) => {
-        expect(reviews).toBeSortedBy('created_at', {descending: true})
+        expect(reviews).toBeSortedBy('created_at')
     });
   }); 
+  // error handling
+  test('returns 400 - custom message for invalid sort query', () => {
+    return request(app)
+      .get("/api/reviews?sort_by=something")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('invalid sort request')
+    });
+  });
+  test('returns 400 - custom message for invalid order query', () => {
+    return request(app)
+      .get("/api/reviews/?order=something")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('invalid sort request')
+    });
+  });
 });
 
 describe('GET - 200: /api/reviews/:review_id', () => {
@@ -193,3 +272,5 @@ describe('PATCH - 200 /api/review/:review_id', () => {
       })
   });
 });
+
+

@@ -7,9 +7,9 @@ const {
 } = require('../models/reviews-models');
 
 exports.getReviews = (req, res, next) => {
-    fetchReviews().then((reviews) => {
+    fetchReviews(req.query).then((reviews) => {
         res.send({reviews})
-    })
+    }).catch(next)
 }
 
 exports.getReviewById = (req, res, next) => {
