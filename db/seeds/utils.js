@@ -25,5 +25,5 @@ exports.formatComments = (comments, idLookup) => {
 
 exports.listCategories = () => {
 	return db.query(`SELECT slug FROM categories`)
-	.then((categories) => {console.log(categories.rows); return categories.rows})
+	.then((categories) => {return categories.rows})
 }
