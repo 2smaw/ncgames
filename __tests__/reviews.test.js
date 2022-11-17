@@ -36,16 +36,17 @@ test('should return an array of review objects', () => {
     });
   }); 
   // queries - category
-  test.only('should return object filtered with valid queries', () => {
+  test('should return object filtered with valid queries', () => {
     return request(app)
-      .get('/api/reviews?category=dexterity')
+      .get('/api/reviews?category=social deduction')
       .expect(200)
       .then(({body: {reviews}}) => {
+        expect(reviews).toHaveLength(11);
         reviews.forEach((review) => {
           expect(review).toMatchObject({
             title: expect.any(String),
             review_id: expect.any(Number),
-            category: 'dexterity',
+            category: 'social deduction',
             designer: expect.any(String),
             owner: expect.any(String),
             review_img_url: expect.any(String),
@@ -54,6 +55,23 @@ test('should return an array of review objects', () => {
             comment_count: expect.any(Number)
           })
         })
+      })
+  });
+  // error handling - categories
+  test('should return 200 when category exists with no review', () => {
+    return request(app)
+      .get('/api/reviews?category=children\'s games')
+      .expect(200)
+      .then((response) => {
+        expect(response.body.msg).toBe(`no reviews in this category`)
+      })
+  });
+  test('should return 404 error when category entered non-existent', () => {
+    return request(app)
+      .get('/api/reviews?category=something')
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe(`category does not exist`)
       })
   });
   // queries - sort_by
@@ -77,15 +95,15 @@ test('should return an array of review objects', () => {
   // multiple queries
   test('should return object filtered with valid queries', () => {
     return request(app)
-      .get('/api/reviews?category=hidden-roles&sort_by=votes&order=desc')
+      .get('/api/reviews?category=dexterity&sort_by=votes&order=desc')
       .expect(200)
       .then(({body : {reviews}}) => {
-        expect(reviews).toBeSortedBy('vote', {descending: true});
+        expect(reviews).toBeSortedBy('votes', {descending: true});
         reviews.forEach((review) => {
           expect(review).toMatchObject({
             title: expect.any(String),
             review_id: expect.any(Number),
-            category: 'hidden-roles',
+            category: 'dexterity',
             designer: expect.any(String),
             owner: expect.any(String),
             review_img_url: expect.any(String),
